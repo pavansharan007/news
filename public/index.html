@@ -1,0 +1,67 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 10 Company News</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; }
+        .company { margin-bottom: 20px; }
+        .company h2 { color: #333; }
+        .news-item { margin: 10px 0; }
+        .news-item a { font-weight: bold; text-decoration: none; color: #007BFF; }
+        .news-item p { color: #555; }
+        #error-message { color: red; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Latest News for Top 10 Companies</h1>
+        <div id="news-container"></div>
+        <div id="error-message"></div>
+    </div>
+
+    <script>
+        const topCompanies = [
+            'Apple', 'Tesla', 'Amazon', 'Microsoft', 'Google', 
+            'Facebook', 'Berkshire Hathaway', 'Visa', 'Johnson & Johnson', 'Nvidia'
+        ];
+
+        // Function to fetch the top headlines from the server
+        const fetchTopHeadlines = async () => {
+            const url = '/api/news';  // Our backend API
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.status === 'ok') {
+                    displayNews(data.articles);  // Process and display the news
+                } else {
+                    document.getElementById('error-message').innerText = 'Error fetching news data.';
+                }
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                document.getElementById('error-message').innerText = 'Error fetching news from the server.';
+            }
+        };
+
+        // Function to display news articles
+        const displayNews = (articles) => {
+            const newsContainer = document.getElementById('news-container');
+            articles.slice(0, 5).forEach(article => {  // Display top 5 articles
+                const newsItem = document.createElement('div');
+                newsItem.classList.add('news-item');
+                newsItem.innerHTML = `
+                    <a href="${article.url}" target="_blank">${article.title}</a>
+                    <p>${article.description}</p>
+                `;
+                newsContainer.appendChild(newsItem);
+            });
+        };
+
+        fetchTopHeadlines();  // Start fetching and displaying news
+    </script>
+</body>
+</html>
